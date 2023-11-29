@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { AppService } from './app.service';
 
@@ -11,8 +11,8 @@ export class AppController {
     return 'suggestions';
   }
 
-  @Get('explanations')
-  getExplanations(): Promise<any> {
-    return firstValueFrom(this.appService.getExplanations('apple'));
+  @Get('explanations/:word')
+  getExplanations(@Param('word') word: string): Promise<any> {
+    return firstValueFrom(this.appService.getExplanations(word));
   }
 }
