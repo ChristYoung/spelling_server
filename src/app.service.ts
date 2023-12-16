@@ -18,7 +18,6 @@ export class AppService {
 
   getExplanations(word: string): Observable<WordItem> {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
-      tap((data) => this.logger.log(data.data)),
       map((data) => {
         const response = data.data;
         const ecDicWord = response['ec']['word'][0];
@@ -33,6 +32,7 @@ export class AppService {
           : null;
         return { phonetic, explanations, example, example_zh };
       }),
+      tap((data) => this.logger.log(data)),
     );
   }
 }
