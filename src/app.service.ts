@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
-import { Observable, map } from 'rxjs';
+import { Injectable, Logger } from '@nestjs/common';
+import { Observable, map, tap } from 'rxjs';
 import { WORDS_COMPLEX_EXPLANATION } from './constant';
 
 export interface WordItem {
@@ -12,10 +12,13 @@ export interface WordItem {
 
 @Injectable()
 export class AppService {
+  private readonly logger = new Logger(AppService.name);
+
   constructor(private readonly http: HttpService) {}
 
   getExplanations(word: string): Observable<WordItem> {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
+      tap((data) => this.logger.log(data.data)),
       map((data) => {
         const response = data.data;
         const ecDicWord = response['ec']['word'][0];
