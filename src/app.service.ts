@@ -22,9 +22,12 @@ export class AppService {
         const blngDicWord = response['blng_sents_part'];
         const phonetic = ecDicWord['usphone'];
         const explanations = ecDicWord['trs'][0]['tr'][0]['l']['i'];
-        const example = blngDicWord['sentence-pair'][0]['sentence'];
-        const example_zh =
-          blngDicWord['sentence-pair'][0]['sentence-translation'];
+        const example = blngDicWord
+          ? blngDicWord['sentence-pair'][0]['sentence']
+          : null;
+        const example_zh = blngDicWord
+          ? blngDicWord['sentence-pair'][0]['sentence-translation']
+          : null;
         return { phonetic, explanations, example, example_zh };
       }),
     );
