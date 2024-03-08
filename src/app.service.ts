@@ -30,7 +30,7 @@ export class AppService {
         const example_zh = blngDicWord
           ? blngDicWord['sentence-pair'][0]['sentence-translation']
           : null;
-        return { phonetic, explanations, example, example_zh };
+        return { phonetic, explanations, example, example_zh, word };
       }),
       tap((data) => this.logger.log(data)),
     );
