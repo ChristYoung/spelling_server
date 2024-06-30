@@ -7,8 +7,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('suggestions')
-  getSuggestions(): string {
-    return 'suggestions';
+  getSuggestions(): Promise<string[]> {
+    return firstValueFrom(this.appService.getSuggestions(10, 10));
   }
 
   @Get('explanations/:word')
