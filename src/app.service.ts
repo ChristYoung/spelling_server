@@ -10,6 +10,11 @@ export interface WordItem {
   example_zh: string;
 }
 
+export interface KeyValueOption {
+  id: string;
+  name: string;
+}
+
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
@@ -46,9 +51,14 @@ export class AppService {
     return result;
   }
 
-  getSuggestions(len: number, stringLen: number): Observable<string[]> {
-    return of(Array.from({ length: len }, () => this.getUUID(stringLen))).pipe(
-      delay(1000),
-    );
+  getSuggestions(len: number, stringLen: number): Observable<KeyValueOption[]> {
+    return of(
+      Array.from({ length: len }, () => {
+        return {
+          id: this.getUUID(stringLen),
+          name: this.getUUID(12),
+        };
+      }),
+    ).pipe(delay(1000));
   }
 }

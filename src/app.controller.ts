@@ -1,14 +1,14 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { AppService } from './app.service';
+import { AppService, KeyValueOption } from './app.service';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('suggestions')
-  getSuggestions(): Promise<string[]> {
-    return firstValueFrom(this.appService.getSuggestions(10, 10));
+  getSuggestions(): Promise<KeyValueOption[]> {
+    return firstValueFrom(this.appService.getSuggestions(10, 6));
   }
 
   @Get('explanations/:word')
