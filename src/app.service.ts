@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { Observable, delay, map, of, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { WORDS_COMPLEX_EXPLANATION } from './constant';
 
 export interface WordItem {
@@ -23,6 +23,7 @@ export class AppService {
 
   getExplanations(word: string): Observable<WordItem> {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
+      tap((data) => this.logger.log('data from YouDao:', data)),
       map((data) => {
         const response = data.data;
         const ecDicWord = response['ec']['word'][0];
@@ -37,7 +38,6 @@ export class AppService {
           : null;
         return { phonetic, explanations, example, example_zh, word };
       }),
-      tap((data) => this.logger.log(data)),
     );
   }
 
@@ -49,16 +49,5 @@ export class AppService {
     for (let i = len; i > 0; --i)
       result += chars[Math.floor(Math.random() * chars.length)];
     return result;
-  }
-
-  getSuggestions(len: number, stringLen: number): Observable<KeyValueOption[]> {
-    return of(
-      Array.from({ length: len }, () => {
-        return {
-          id: this.getUUID(stringLen),
-          name: this.getUUID(12),
-        };
-      }),
-    ).pipe(delay(1000));
   }
 }
