@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { WORDS_COMPLEX_EXPLANATION } from './constant';
 
 export interface WordItem {
@@ -8,6 +8,8 @@ export interface WordItem {
   explanations: string;
   example: string;
   example_zh: string;
+  eng_explanation?: string;
+  similar_words?: string[];
 }
 
 export interface KeyValueOption {
@@ -24,9 +26,14 @@ export class AppService {
   getExplanations(word: string): Observable<WordItem> {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
       map((data) => {
-        const response = data.data;
+        const response = data.data as any;
         const ecDicWord = response['ec']['word'][0];
         const blngDicWord = response['blng_sents_part'];
+        const similar_words =
+          response?.syno?.synos?.length > 0
+            ? response?.syno?.synos[0]?.syno?.ws?.map((sw) => sw.w)
+            : [];
+        const eng_explanation = response?.ee?.word?.trs[0]?.tr[0]?.l.i;
         const phonetic = ecDicWord['usphone'];
         const explanations = ecDicWord['trs'][0]['tr'][0]['l']['i'];
         const example = blngDicWord
@@ -35,8 +42,17 @@ export class AppService {
         const example_zh = blngDicWord
           ? blngDicWord['sentence-pair'][0]['sentence-translation']
           : null;
-        return { phonetic, explanations, example, example_zh, word };
+        return {
+          phonetic,
+          explanations,
+          example,
+          example_zh,
+          word,
+          similar_words,
+          eng_explanation,
+        };
       }),
+      tap((data) => this.logger.log('getWordsItem from YouDao API:', data)),
     );
   }
 
