@@ -2,6 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Observable, map, tap } from 'rxjs';
 import { WORDS_COMPLEX_EXPLANATION } from './constant';
+import * as fs from 'fs';
+import { join } from 'path';
 
 export interface WordItem {
   phonetic: string;
@@ -54,6 +56,19 @@ export class AppService {
       }),
       tap((data) => this.logger.log('getWordsItem from YouDao API:', data)),
     );
+  }
+
+  async exportJsonToFile(data: any): Promise<string> {
+    const filePath = join(__dirname, '..', 'data.json');
+    return new Promise((resolve, reject) => {
+      fs.writeFile(filePath, JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(filePath);
+        }
+      });
+    });
   }
 
   getUUID(len: number) {
