@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, catchError, map, tap, throwError } from 'rxjs';
 import { WORDS_COMPLEX_EXPLANATION } from './constant';
 import * as fs from 'fs';
 import { join } from 'path';
@@ -55,6 +55,10 @@ export class AppService {
         };
       }),
       tap((data) => this.logger.log('getWordsItem from YouDao API:', data)),
+      catchError((err) => {
+        this.logger.error(err);
+        return throwError(() => new Error(err));
+      }),
     );
   }
 
