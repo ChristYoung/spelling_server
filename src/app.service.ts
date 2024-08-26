@@ -37,7 +37,7 @@ export class AppService {
             : [];
         const eng_explanation = response?.ee?.word?.trs[0]?.tr[0]?.l.i;
         const phonetic = ecDicWord['usphone'];
-        const explanations = ecDicWord['trs'][0]['tr'][0]['l']['i'];
+        const explanations = ecDicWord['trs'][0]['tr'][0]['l']['i'][0];
         const example = blngDicWord
           ? blngDicWord['sentence-pair'][0]['sentence']
           : null;
