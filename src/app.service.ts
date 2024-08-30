@@ -7,7 +7,7 @@ import { join } from 'path';
 
 export interface WordItem {
   phonetic: string;
-  explanations: string;
+  explanation: string;
   example: string;
   example_zh: string;
   eng_explanation?: string;
@@ -37,7 +37,7 @@ export class AppService {
             : [];
         const eng_explanation = response?.ee?.word?.trs[0]?.tr[0]?.l.i;
         const phonetic = ecDicWord['usphone'];
-        const explanations = ecDicWord['trs'][0]['tr'][0]['l']['i'][0];
+        const explanation = ecDicWord['trs'][0]['tr'][0]['l']['i'][0];
         const example = blngDicWord
           ? blngDicWord['sentence-pair'][0]['sentence']
           : null;
@@ -46,7 +46,7 @@ export class AppService {
           : null;
         return {
           phonetic,
-          explanations,
+          explanation,
           example,
           example_zh,
           word,
