@@ -30,15 +30,16 @@ export class AppService {
       map((data) => {
         const response = data.data as any;
         this.logger.log('getExplanations response:', JSON.stringify(response));
-        const ecDicWord = response['ec']['word'][0];
-        const blngDicWord = response['blng_sents_part'];
+        const ecDicWord = response?.ec?.word[0] ?? null;
+        const phonetic = ecDicWord?.usphone ?? '';
+        // ['trs'][0]['tr'][0]['l']['i'][0]
+        const explanation = ecDicWord?.trs[0]?.tr[0]?.l?.i[0] ?? '';
+        const blngDicWord = response?.blng_sents_part ?? null;
         const similar_words =
           response?.syno?.synos?.length > 0
             ? response?.syno?.synos[0]?.syno?.ws?.map((sw) => sw.w)
             : [];
         const eng_explanation = response?.ee?.word?.trs[0]?.tr[0]?.l.i;
-        const phonetic = ecDicWord['usphone'];
-        const explanation = ecDicWord['trs'][0]['tr'][0]['l']['i'][0];
         const example = blngDicWord
           ? blngDicWord['sentence-pair'][0]['sentence']
           : null;
