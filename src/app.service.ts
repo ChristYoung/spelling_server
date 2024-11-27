@@ -29,7 +29,7 @@ export class AppService {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
       map((data) => {
         const response = data.data as any;
-        this.logger.log('getExplanations response:', response);
+        this.logger.log('getExplanations response:', JSON.stringify(response));
         const ecDicWord = response['ec']['word'][0];
         const blngDicWord = response['blng_sents_part'];
         const similar_words =
@@ -55,7 +55,7 @@ export class AppService {
           eng_explanation,
         };
       }),
-      tap((data) => this.logger.log('converted data:', data)),
+      tap((data) => this.logger.log('converted data:', JSON.stringify(data))),
       catchError((err) => {
         this.logger.error(err);
         return throwError(() => new Error(err));
