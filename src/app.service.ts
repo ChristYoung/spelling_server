@@ -27,9 +27,9 @@ export class AppService {
 
   getExplanations(word: string): Observable<WordItem> {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
-      tap((data) => this.logger.log('get word details from YOUDAO:', data)),
       map((data) => {
         const response = data.data as any;
+        this.logger.log('getExplanations response:', response);
         const ecDicWord = response['ec']['word'][0];
         const blngDicWord = response['blng_sents_part'];
         const similar_words =
