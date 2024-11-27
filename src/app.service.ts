@@ -27,6 +27,7 @@ export class AppService {
 
   getExplanations(word: string): Observable<WordItem> {
     return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
+      tap((data) => this.logger.log('get word details from YOUDAO:', data)),
       map((data) => {
         const response = data.data as any;
         const ecDicWord = response['ec']['word'][0];
@@ -54,7 +55,7 @@ export class AppService {
           eng_explanation,
         };
       }),
-      tap((data) => this.logger.log('getWordsItem from YouDao API:', data)),
+      tap((data) => this.logger.log('converted data:', data)),
       catchError((err) => {
         this.logger.error(err);
         return throwError(() => new Error(err));
