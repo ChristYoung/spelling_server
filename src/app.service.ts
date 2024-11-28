@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { Observable, catchError, map, tap, throwError } from 'rxjs';
-import { WORDS_COMPLEX_EXPLANATION } from './constant';
 import * as fs from 'fs';
 import { join } from 'path';
+import { Observable, catchError, map, shareReplay, throwError } from 'rxjs';
+import { WORDS_COMPLEX_EXPLANATION } from './constant';
 
 export interface WordItem {
   phonetic: string;
@@ -25,11 +25,14 @@ export class AppService {
 
   constructor(private readonly http: HttpService) {}
 
-  getExplanations(word: string): Observable<WordItem> {
-    return this.http.get(`${WORDS_COMPLEX_EXPLANATION}${word}`).pipe(
+  getExplanations(word: string): Observable<unknown> {
+    const fetchWordDetails$ = this.http
+      .get(`${WORDS_COMPLEX_EXPLANATION}${word}`)
+      .pipe(shareReplay(1));
+
+    return fetchWordDetails$.pipe(
       map((data) => {
         const response = data.data as any;
-        this.logger.log('getExplanations response:', JSON.stringify(response));
         const ecDicWord = response?.ec?.word[0] ?? null;
         const phonetic = ecDicWord?.usphone ?? '';
         // ['trs'][0]['tr'][0]['l']['i'][0]
@@ -56,10 +59,16 @@ export class AppService {
           eng_explanation,
         };
       }),
-      tap((data) => this.logger.log('converted data:', JSON.stringify(data))),
       catchError((err) => {
         this.logger.error(err);
-        return throwError(() => new Error(err));
+        return fetchWordDetails$.pipe(
+          map((res) => {
+            if (res && res.data) {
+              this.logger.log(JSON.stringify(res.data));
+            }
+            return throwError(() => new Error(err));
+          }),
+        );
       }),
     );
   }
